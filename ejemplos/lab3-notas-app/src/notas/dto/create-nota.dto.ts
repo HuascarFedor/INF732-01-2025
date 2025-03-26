@@ -7,5 +7,5 @@ export class CreateNotaDto {
 
   @IsString()
   @IsNotEmpty({ message: 'The content is required' })
-  description: string;
+  content: string;
 }
