@@ -5,6 +5,7 @@ import { NotaModule } from './notas/notas.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { Nota } from './notas/nota.entity';
+import { TareasModule } from './tareas/tareas.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { Nota } from './notas/nota.entity';
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     NotaModule,
+    TareasModule,
   ],
   controllers: [AppController],
   providers: [AppService],
