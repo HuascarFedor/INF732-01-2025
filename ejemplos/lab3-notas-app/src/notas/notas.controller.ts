@@ -1,19 +1,46 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { NotaService } from './notas.service';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+} from '@nestjs/common';
+import { NotasService } from './notas.service';
+import { Nota } from './nota.entity';
 import { CreateNotaDto } from './dto/create-nota.dto';
-import { Nota } from './notas.entity';
+import { UpdateNotaDto } from './dto/update-nota.dto';
 
-@Controller('nota')
-export class NotaController {
-  constructor(private readonly notaService: NotaService) {}
+@Controller('notas')
+export class NotasController {
+  constructor(private readonly notasService: NotasService) {}
 
   @Post()
-  async create(@Body() CreateNotaDto: CreateNotaDto) {
-    return await this.notaService.create(CreateNotaDto);
+  async create(@Body() createNotaDto: CreateNotaDto): Promise<Nota> {
+    return this.notasService.create(createNotaDto);
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string): Promise<Nota> {
+    return this.notasService.findOne(+id);
   }
 
   @Get()
   async findAll(): Promise<Nota[]> {
-    return await this.notaService.findAll();
+    return this.notasService.findAll();
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateNotaDto: UpdateNotaDto,
+  ): Promise<Nota> {
+    return this.notasService.update(+id, updateNotaDto);
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id: string): Promise<void> {
+    return this.notasService.remove(+id);
   }
 }

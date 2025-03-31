@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { NotaModule } from './notas/notas.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { Nota } from './notas/notas.entity';
+import { Nota } from './notas/nota.entity';
 
 @Module({
   imports: [
