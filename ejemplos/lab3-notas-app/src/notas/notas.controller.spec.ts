@@ -2,40 +2,29 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotasController } from './notas.controller';
 import { NotasService } from './notas.service';
 import { NotFoundException } from '@nestjs/common';
-
-const mockNota = {
-  id: 1,
-  title: 'Test Nota',
-  content: 'Test Content',
-};
-
-const createNotaDto = {
-  title: 'New Nota',
-  content: 'New Content',
-};
-
-const updateNotaDto = {
-  title: 'Título actualizado',
-  content: 'Contenido actualizado',
-};
+import { Nota } from './nota.entity';
+import { CreateNotaDto } from './dto/create-nota.dto';
+import { UpdateNotaDto } from './dto/update-nota.dto';
 
 describe('NotasController', () => {
   let controller: NotasController;
   let service: NotasService;
 
   beforeEach(async () => {
+    const mockService = {
+      create: jest.fn(),
+      findOne: jest.fn(),
+      findAll: jest.fn(),
+      update: jest.fn(),
+      remove: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [NotasController],
       providers: [
         {
           provide: NotasService,
-          useValue: {
-            create: jest.fn().mockResolvedValue(mockNota),
-            findOne: jest.fn().mockResolvedValue(mockNota),
-            findAll: jest.fn().mockResolvedValue([mockNota]),
-            update: jest.fn().mockResolvedValue(mockNota),
-            remove: jest.fn().mockResolvedValue(undefined),
-          },
+          useValue: mockService,
         },
       ],
     }).compile();
