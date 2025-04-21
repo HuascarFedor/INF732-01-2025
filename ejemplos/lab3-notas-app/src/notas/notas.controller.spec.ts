@@ -39,4 +39,56 @@ describe('NotasController', () => {
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
+
+  describe('create', () => {
+    it('deberia crear una nota', async () => {
+      const mockNota: Nota = {
+        id: 1,
+        title: 'Nota 1',
+        content: 'Contenido',
+      };
+      const createNotaDto: CreateNotaDto = {
+        title: 'Nota 1',
+        content: 'Contenido',
+      };
+      jest.spyOn(service, 'create').mockResolvedValue(mockNota);
+      const result = await controller.create(createNotaDto);
+      expect(result).toEqual(mockNota);
+      expect(service.create).toHaveBeenCalledWith(createNotaDto);
+    });
+  });
+
+  describe('findall', () => {
+    it('deberia retornar todas las notas', async () => {
+      const mockNotas: Nota[] = [
+        { id: 1, title: 'Nota 1', content: 'Contenido 1' },
+        { id: 2, title: 'Nota 2', content: 'Contenido 2' },
+      ];
+      jest.spyOn(service, 'findAll').mockResolvedValue(mockNotas);
+      const result = await controller.findAll();
+      expect(result).toEqual(mockNotas);
+      expect(service.findAll).toHaveBeenCalled();
+    });
+  });
+
+  describe('findOne', () => {
+    it('deberia retornar una nota por id', async () => {
+      const mockNota: Nota = {
+        id: 1,
+        title: 'Nota 1',
+        content: 'Contenido',
+      };
+      jest.spyOn(service, 'findOne').mockResolvedValue(mockNota);
+      const result = await controller.findOne('1');
+      expect(result).toEqual(mockNota);
+      expect(service.findOne).toHaveBeenCalledWith(1);
+    });
+    it('deberia lanzar NotFoundException si no se encuentra la nota', async () => {
+      jest.spyOn(service, 'findOne').mockRejectedValue(new NotFoundException());
+      await expect(controller.findOne('999')).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(service.findOne).toHaveBeenCalledWith(999);
+    });
+  });
 });
