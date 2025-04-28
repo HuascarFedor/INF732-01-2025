@@ -86,4 +86,115 @@ describe('NotasController (e2e)', () => {
       expect(response.body.message).toContain('The content is required');
     });
   });
+  describe('/notas (GET)', () => {
+    it('debería devolver todas las notas', async () => {
+      const createNotaDto1 = {
+        title: 'Nota 1',
+        content: 'Contenido de la nota 1',
+      };
+
+      const createNotaDto2 = {
+        title: 'Nota 2',
+        content: 'Contenido de la nota 2',
+      };
+
+      await notaRepository.save(createNotaDto1);
+      await notaRepository.save(createNotaDto2);
+
+      const response = await request(app.getHttpServer())
+        .get('/notas')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+      expect(response.body[0]).toHaveProperty('id');
+      expect(response.body[0].title).toEqual(createNotaDto1.title);
+      expect(response.body[0].content).toEqual(createNotaDto1.content);
+    });
+  });
+  describe('/notas/:id (GET)', () => {
+    it('debería devolver una nota por ID', async () => {
+      const createNotaDto = {
+        title: 'Nota de prueba',
+        content: 'Contenido de la nota de prueba',
+      };
+
+      const nota = await notaRepository.save(createNotaDto);
+
+      const response = await request(app.getHttpServer())
+        .get(`/notas/${nota.id}`)
+        .expect(200);
+
+      expect(response.body).toHaveProperty('id');
+      expect(response.body.title).toEqual(createNotaDto.title);
+      expect(response.body.content).toEqual(createNotaDto.content);
+    });
+
+    it('debería devolver un error 404 si la nota no existe', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/notas/999')
+        .expect(404);
+
+      expect(response.body.message).toContain('Nota con ID 999 no encontrada');
+    });
+  });
+  describe('/notas/:id (PUT)', () => {
+    it('debería actualizar una nota existente', async () => {
+      const createNotaDto = {
+        title: 'Nota de prueba',
+        content: 'Contenido de la nota de prueba',
+      };
+
+      const nota = await notaRepository.save(createNotaDto);
+
+      const updateNotaDto = {
+        title: 'Nota actualizada',
+        content: 'Contenido actualizado',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(`/notas/${nota.id}`)
+        .send(updateNotaDto)
+        .expect(200);
+
+      expect(response.body).toHaveProperty('id');
+      expect(response.body.title).toEqual(updateNotaDto.title);
+      expect(response.body.content).toEqual(updateNotaDto.content);
+    });
+
+    it('debería devolver un error 404 si la nota no existe', async () => {
+      const updateNotaDto = {
+        title: 'Nota actualizada',
+        content: 'Contenido actualizado',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put('/notas/999')
+        .send(updateNotaDto)
+        .expect(404);
+
+      expect(response.body.message).toContain('Nota con ID 999 no encontrada');
+    });
+  });
+  describe('/notas/:id (DELETE)', () => {
+    it('debería eliminar una nota existente', async () => {
+      const createNotaDto = {
+        title: 'Nota de prueba',
+        content: 'Contenido de la nota de prueba',
+      };
+
+      const nota = await notaRepository.save(createNotaDto);
+
+      const response = await request(app.getHttpServer())
+        .delete(`/notas/${nota.id}`)
+        .expect(200);
+    });
+
+    it('debería devolver un error 404 si la nota no existe', async () => {
+      const response = await request(app.getHttpServer())
+        .delete('/notas/999')
+        .expect(404);
+
+      expect(response.body.message).toContain('Nota con ID 999 no encontrada');
+    });
+  });
 });
